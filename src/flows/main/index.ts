@@ -8,4 +8,5 @@ export const main = buildOrderFlow({
     name: 'MainOrderFlow',
     component: () => import('./MainOrderFlow.vue'),
   },
+  summaryComponent: () => import('./MainOrderSummary.vue'),
 });
