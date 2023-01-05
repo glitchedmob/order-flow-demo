@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { mainOrderFlow } from '@/flows/main';
+import { trademarkOrderFlow } from '@/flows/trademark';
 
-const moduleStores = mainOrderFlow.modules.map((m) => m.useModuleStore());
+const moduleStores = trademarkOrderFlow.modules.map((m) => m.useModuleStore());
 
 const isValid = computed(() => moduleStores.every((store) => store.isValid));
 </script>
@@ -10,7 +10,7 @@ const isValid = computed(() => moduleStores.every((store) => store.isValid));
 <template>
   <h2>Summary</h2>
 
-  <template v-for="(m, index) in mainOrderFlow.modules" :key="index">
+  <template v-for="(m, index) in trademarkOrderFlow.modules" :key="index">
     <component :is="m.summaryItemComponent" />
   </template>
 

@@ -30,7 +30,6 @@ export const useNavigationStore = defineStore('navigation', () => {
   };
 
   const nextModule = () => {
-    console.log('going to next module');
     if (!currentModule.value || !currentFlow.value) {
       return;
     }
@@ -40,8 +39,6 @@ export const useNavigationStore = defineStore('navigation', () => {
     }
 
     currentModuleIndex.value += 1;
-
-    console.log(`routename ${getRouteName(currentModule.value.startRoute)}`);
 
     return router.replace({
       name: getRouteName(currentModule.value.startRoute),

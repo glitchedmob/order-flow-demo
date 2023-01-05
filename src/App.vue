@@ -1,5 +1,7 @@
 <template>
   <main class="container">
-    <RouterView />
+    <article>
+      <RouterView />
+    </article>
   </main>
 </template>

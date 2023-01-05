@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { mainOrderFlow } from '@/flows/main';
+import { trademarkOrderFlow } from '@/flows/trademark';
 import { useNavigationStore } from '@/stores/navigation';
 
-const moduleStores = mainOrderFlow.modules.map((m) => m.useModuleStore());
+const moduleStores = trademarkOrderFlow.modules.map((m) => m.useModuleStore());
 
 const navigationStore = useNavigationStore();
 
 onMounted(() => {
   moduleStores.forEach((store) => store.initialize());
 
-  navigationStore.loadFlow(mainOrderFlow);
+  navigationStore.loadFlow(trademarkOrderFlow);
 });
 </script>
 <template>
-  <h1>MainOrderFlow</h1>
+  <h1>TrademarkOrderFlow</h1>
   <RouterView />
 </template>
