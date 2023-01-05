@@ -1,8 +1,10 @@
 import type { IOrderModule } from '@/types/IOrderModule';
-import { useContactModuleStore } from '@/modules/contact/store';
+import { useContactStore } from '@/modules/contact/store';
 import { defineAsyncComponent } from 'vue';
 
-export const contact: IOrderModule<typeof useContactModuleStore> = {
+export const contact: IOrderModule<typeof useContactStore> = {
+  startRoute: 'ContactName',
+
   routes: [
     {
       path: '/name',
@@ -18,5 +20,5 @@ export const contact: IOrderModule<typeof useContactModuleStore> = {
 
   summaryItemComponent: defineAsyncComponent(() => import('./SummaryItem.vue')),
 
-  useModuleStore: useContactModuleStore,
+  useModuleStore: useContactStore,
 };

@@ -22,6 +22,8 @@ type IOrderModuleStoreDefinition = StoreDefinition<
 export interface IOrderModule<
   TStore extends IOrderModuleStoreDefinition = IOrderModuleStoreDefinition,
 > {
+  startRoute: string;
+
   routes: RouteRecordRaw[];
 
   summaryItemComponent: ReturnType<typeof defineAsyncComponent>;

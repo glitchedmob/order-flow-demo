@@ -1,7 +1,7 @@
-<script setup>
-import { useContactModuleStore } from '@/modules/contact/store';
+<script setup lang="ts">
+import { useContactStore } from '@/modules/contact/store';
 
-const contactStore = useContactModuleStore();
+const contactStore = useContactStore();
 </script>
 <template>
   <label>

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-export const useContactModuleStore = defineStore('contact', () => {
+export const useContactStore = defineStore('contact', () => {
   const name = ref('');
   const address = ref('');
 
