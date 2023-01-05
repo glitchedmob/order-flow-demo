@@ -19,9 +19,7 @@ type IOrderModuleStoreDefinition = StoreDefinition<
   IOrderModuleStoreActions
 >;
 
-export interface IOrderModule<
-  TStore extends IOrderModuleStoreDefinition = IOrderModuleStoreDefinition,
-> {
+export interface IOrderModule<TStore extends IOrderModuleStoreDefinition> {
   startRoute: string;
 
   routes: RouteRecordRaw[];

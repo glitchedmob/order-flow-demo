@@ -2,7 +2,7 @@ import type { IOrderModule } from '@/modules/IOrderModule';
 import { defineAsyncComponent } from 'vue';
 import { useRegisteredAgentStore } from '@/modules/registeredAgent/store';
 
-export const registeredAgent: IOrderModule = {
+export const registeredAgent: IOrderModule<typeof useRegisteredAgentStore> = {
   startRoute: 'RegisteredAgent',
 
   routes: [
