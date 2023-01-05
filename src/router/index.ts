@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { main } from '@/flows/main';
+import { mainOrderFlow } from '@/flows/main';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [main.route],
+  routes: [mainOrderFlow.route],
 });
 
 export default router;

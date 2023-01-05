@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { main } from '@/flows/main/index';
+import { mainOrderFlow } from '@/flows/main/index';
 import { useNavigationStore } from '@/stores/navigation';
 
-const moduleStores = main.modules.map((m) => m.useModuleStore());
+const moduleStores = mainOrderFlow.modules.map((m) => m.useModuleStore());
 
 const navigationStore = useNavigationStore();
 
 onMounted(() => {
   moduleStores.forEach((store) => store.initialize());
 
-  navigationStore.loadFlow(main);
+  navigationStore.loadFlow(mainOrderFlow);
 });
 </script>
 <template>
