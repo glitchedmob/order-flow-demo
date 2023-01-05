@@ -2,7 +2,7 @@ import type { IOrderModule } from '@/modules/IOrderModule';
 import { defineAsyncComponent } from 'vue';
 import { useCompanyInfoModuleStore } from '@/modules/companyInfo/store';
 
-export const companyInfo: IOrderModule<typeof useCompanyInfoModuleStore> = {
+export const companyInfo: IOrderModule = {
   startRoute: 'CompanyName',
 
   routes: [
