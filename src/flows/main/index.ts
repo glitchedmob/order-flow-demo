@@ -1,8 +1,9 @@
 import { contact } from '@/modules/contact';
+import { companyInfo } from '@/modules/companyInfo';
 import { buildOrderFlow } from '@/flows/buildOrderFlow';
 
 export const main = buildOrderFlow({
-  modules: [contact],
+  modules: [contact, companyInfo],
   route: {
     path: '/main',
     name: 'MainOrderFlow',

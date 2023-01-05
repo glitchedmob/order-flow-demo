@@ -8,12 +8,12 @@ const contactStore = useContactStore();
   <h3>Contact Summary</h3>
 
   <label>
-    Address
+    Contact Address
     <input type="text" v-model="contactStore.address" />
   </label>
 
   <label>
-    Name
+    Contact Name
     <input type="text" v-model="contactStore.name" />
   </label>
 </template>

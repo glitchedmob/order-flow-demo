@@ -5,7 +5,7 @@ const companyInfoStore = useCompanyInfoModuleStore();
 </script>
 
 <template>
-  <h3>Contact Summary</h3>
+  <h3>Company Summary</h3>
 
   <label>
     Company Address

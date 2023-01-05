@@ -1,16 +1,12 @@
-import type { IOrderModule } from '@/types/IOrderModule';
+import type { IOrderModule } from '@/modules/IOrderModule';
 import type { RouteRecordName, RouteRecordRaw } from 'vue-router';
+import type { IOrderFlow } from '@/flows/IOrderFlow';
 
 export interface IOrderFlowArgs {
   modules: IOrderModule[];
   route: Omit<RouteRecordRaw, 'children'>;
 
   summaryComponent: NonNullable<RouteRecordRaw['component']>;
-}
-
-export interface IOrderFlow {
-  modules: IOrderModule[];
-  route: RouteRecordRaw;
 }
 
 export function buildOrderFlow({

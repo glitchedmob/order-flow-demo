@@ -1,4 +1,4 @@
-import type { IOrderModule } from '@/types/IOrderModule';
+import type { IOrderModule } from '@/modules/IOrderModule';
 import { useContactStore } from '@/modules/contact/store';
 import { defineAsyncComponent } from 'vue';
 
