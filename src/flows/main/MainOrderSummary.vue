@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { main } from '@/flows/main/index';
 
 const moduleStores = main.modules.map((m) => m.useModuleStore());
 
-const isValid = moduleStores.every((store) => store.isValid);
+const isValid = computed(() => moduleStores.every((store) => store.isValid));
 </script>
 
 <template>
