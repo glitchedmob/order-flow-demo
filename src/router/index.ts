@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { mainOrderFlow } from '@/flows/main';
+import { formationOrderFlow } from '@/flows/formation';
 import { trademarkOrderFlow } from '@/flows/trademark';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [mainOrderFlow.route, trademarkOrderFlow.route],
+  routes: [formationOrderFlow.route, trademarkOrderFlow.route],
 });
 
 export default router;

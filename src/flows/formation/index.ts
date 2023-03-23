@@ -3,12 +3,12 @@ import { companyInfo } from '@/modules/companyInfo';
 import { registeredAgent } from '@/modules/registeredAgent';
 import { buildOrderFlow } from '@/flows/buildOrderFlow';
 
-export const mainOrderFlow = buildOrderFlow({
+export const formationOrderFlow = buildOrderFlow({
   modules: [contact, companyInfo, registeredAgent],
   route: {
-    path: '/main',
-    name: 'MainOrderFlow',
-    component: () => import('./MainOrderFlow.vue'),
+    path: '/formation',
+    name: 'FormationOrderFlow',
+    component: () => import('./FormationOrderFlow.vue'),
   },
-  summaryComponent: () => import('./MainOrderSummary.vue'),
+  summaryComponent: () => import('./FormationOrderSummary.vue'),
 });
