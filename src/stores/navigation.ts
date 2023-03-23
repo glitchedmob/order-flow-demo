@@ -5,7 +5,7 @@ import type {
   RouteRecordRaw,
 } from 'vue-router';
 import { useRouter } from 'vue-router';
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import type { IOrderFlow } from '@/flows/IOrderFlow';
 import type { IOrderModule } from '@/modules/IOrderModule';
 import { buildFlowDefaultRoute } from '@/flows/buildOrderFlow';
@@ -15,7 +15,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 
   const currentFlow = ref<IOrderFlow>();
   const currentModuleIndex = ref(0);
-  const currentModules = ref<IOrderModule[]>([]);
+  const currentModules = shallowRef<IOrderModule[]>([]);
   const currentModule = computed(
     () => currentModules.value[currentModuleIndex.value],
   );
@@ -31,15 +31,23 @@ export const useNavigationStore = defineStore('navigation', () => {
   const getModuleFromRoute = (
     route: RouteLocationNormalizedLoaded,
   ): IOrderModule | undefined => {
-    const routeNameWithoutFlow = route.name
-      ?.toString()
-      .replace(currentFlow.value?.name.toString() ?? '', '');
+    const routeNameWithoutFlow = getRouteNameWithoutFlow(route);
 
     return currentModules.value.find((m) => {
       const routeNames = m.routes.map((route) => route.name?.toString());
 
       return routeNames.includes(routeNameWithoutFlow);
     });
+  };
+
+  const getRouteNameWithoutFlow = (
+    route: RouteLocationNormalizedLoaded,
+  ): string => {
+    return (
+      route.name
+        ?.toString()
+        .replace(currentFlow.value?.name.toString() ?? '', '') ?? ''
+    );
   };
 
   const loadFlow = async (flow: IOrderFlow, modules: IOrderModule[]) => {
@@ -67,6 +75,11 @@ export const useNavigationStore = defineStore('navigation', () => {
 
     if (activeModule && activeModuleIndex !== -1) {
       currentModuleIndex.value = activeModuleIndex;
+      return;
+    }
+
+    if (getRouteNameWithoutFlow(router.currentRoute.value) === 'Summary') {
+      currentModuleIndex.value = currentModules.value.length - 1;
       return;
     }
 
@@ -117,6 +130,16 @@ function buildFlowRoutes(
   const childRoutes = modules.flatMap((m) =>
     prefixRoutes(m.routes, flow.path, flow.name),
   );
+
+  if (flow.summaryComponent) {
+    const summaryRoute = {
+      path: '/summary',
+      name: 'Summary',
+      component: flow.summaryComponent,
+    };
+
+    childRoutes.push(...prefixRoutes([summaryRoute], flow.path, flow.name));
+  }
 
   return {
     path: flow.path,
