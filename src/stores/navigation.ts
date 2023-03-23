@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia';
-import type { RouteRecordName, RouteRecordRaw } from 'vue-router';
+import type {
+  RouteLocationNormalizedLoaded,
+  RouteRecordName,
+  RouteRecordRaw,
+} from 'vue-router';
 import { useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
 import type { IOrderFlow } from '@/flows/IOrderFlow';
@@ -24,6 +28,20 @@ export const useNavigationStore = defineStore('navigation', () => {
     return (currentFlow.value.route.name?.toString() ?? '') + name;
   };
 
+  const getModuleFromRoute = (
+    route: RouteLocationNormalizedLoaded,
+  ): IOrderModule | undefined => {
+    const routeNameWithoutFlow = route.name
+      ?.toString()
+      .replace(currentFlow.value?.name.toString() ?? '', '');
+
+    return currentModules.value.find((m) => {
+      const routeNames = m.routes.map((route) => route.name?.toString());
+
+      return routeNames.includes(routeNameWithoutFlow);
+    });
+  };
+
   const loadFlow = async (flow: IOrderFlow, modules: IOrderModule[]) => {
     if (currentFlow.value) {
       const originalFlowRoute = buildFlowDefaultRoute(currentFlow.value);
@@ -32,22 +50,27 @@ export const useNavigationStore = defineStore('navigation', () => {
 
     currentFlow.value = flow;
     currentModules.value = modules;
-    currentModuleIndex.value = 0;
 
     const flowRoutes = buildFlowRoutes(flow, modules);
     router.addRoute(flowRoutes);
 
+    // Trigger a rerender and update current route once new routes are loaded
     await router.replace({
       path: router.currentRoute.value.path,
       query: router.currentRoute.value.query,
     });
 
-    const currentRoute = router.currentRoute.value.name;
+    const activeModule = getModuleFromRoute(router.currentRoute.value);
+    const activeModuleIndex = activeModule
+      ? currentModules.value.indexOf(activeModule)
+      : -1;
 
-    if (currentRoute && router.hasRoute(currentRoute)) {
+    if (activeModule && activeModuleIndex !== -1) {
+      currentModuleIndex.value = activeModuleIndex;
       return;
     }
 
+    currentModuleIndex.value = 0;
     return router.replace({
       name: getRouteName(currentModule.value?.startRoute),
     });
