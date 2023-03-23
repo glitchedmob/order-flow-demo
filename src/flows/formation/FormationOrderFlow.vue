@@ -6,13 +6,24 @@ import type { IOrderModuleStore } from '@/modules/IOrderModule';
 import { contact } from '@/modules/contact';
 import { companyInfo } from '@/modules/companyInfo';
 import { registeredAgent } from '@/modules/registeredAgent';
+import { wait } from '@/utils';
 
 const moduleStores = ref<IOrderModuleStore[]>([]);
 
 const navigationStore = useNavigationStore();
 
-onMounted(() => {
-  const modules = [contact, companyInfo, registeredAgent];
+const isLoading = ref(true);
+
+const fetchConfig = async () => {
+  await wait(500);
+
+  isLoading.value = false;
+
+  return [contact, companyInfo, registeredAgent];
+};
+
+onMounted(async () => {
+  const modules = await fetchConfig();
 
   navigationStore.loadFlow(formationOrderFlow, modules);
 
@@ -22,5 +33,6 @@ onMounted(() => {
 </script>
 <template>
   <h1>FormationOrderFlow</h1>
+  <p v-if="isLoading">Loading...</p>
   <RouterView />
 </template>
