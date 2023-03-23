@@ -12,7 +12,7 @@ interface IOrderModuleStoreActions {
   initialize: () => Promise<void> | void;
 }
 
-type IOrderModuleStore = Store<
+export type IOrderModuleStore = Store<
   string,
   IOrderModuleStoreState,
   IOrderModuleStoreGetters,

@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { trademarkOrderFlow } from '@/flows/trademark';
 import { useNavigationStore } from '@/stores/navigation';
+import type { IOrderModuleStore } from '@/modules/IOrderModule';
+import { companyInfo } from '@/modules/companyInfo';
+import { contact } from '@/modules/contact';
 
-const moduleStores = trademarkOrderFlow.modules.map((m) => m.useModuleStore());
+const moduleStores = ref<IOrderModuleStore[]>([]);
 
 const navigationStore = useNavigationStore();
 
 onMounted(() => {
-  moduleStores.forEach((store) => store.initialize());
+  moduleStores.value.forEach((store) => store.initialize());
 
-  navigationStore.loadFlow(trademarkOrderFlow);
+  const modules = [companyInfo, contact];
+
+  navigationStore.loadFlow(trademarkOrderFlow, modules);
+
+  moduleStores.value = modules.map((m) => m.useModuleStore());
+  moduleStores.value.forEach((store) => store.initialize());
 });
 </script>
 <template>

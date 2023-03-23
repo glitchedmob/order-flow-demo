@@ -1,35 +1,51 @@
-import type { IOrderModule } from '@/modules/IOrderModule';
 import type { RouteRecordName, RouteRecordRaw } from 'vue-router';
 import type { IOrderFlow } from '@/flows/IOrderFlow';
+import CatchAll from '@/components/CatchAll.vue';
 
 export interface IOrderFlowArgs {
-  modules: IOrderModule[];
-  route: Omit<RouteRecordRaw, 'children'>;
-
-  summaryComponent: NonNullable<RouteRecordRaw['component']>;
+  path: string;
+  name: RouteRecordName;
+  layoutComponent: RouteRecordRaw['component'];
+  summaryComponent?: NonNullable<RouteRecordRaw['component']>;
 }
 
 export function buildOrderFlow({
-  modules,
-  route,
+  path,
+  name,
+  layoutComponent,
   summaryComponent,
 }: IOrderFlowArgs): IOrderFlow {
-  const summaryRoute: RouteRecordRaw = {
-    path: '/summary',
-    name: 'Summary',
-    component: summaryComponent,
-  };
+  // const summaryRoute: RouteRecordRaw = {
+  //   path: '/summary',
+  //   name: 'Summary',
+  //   component: summaryComponent,
+  // };
 
   return {
-    modules,
-    route: {
-      path: route.path,
-      name: route.name,
-      component: route.component,
-      children: modules.flatMap((m) =>
-        prefixRoutes([...m.routes, summaryRoute], route.path, route.name),
-      ),
-    },
+    path,
+    name,
+    layoutComponent,
+    summaryComponent,
+    route: buildFlowDefaultRoute({ path, name, layoutComponent }),
+  };
+}
+
+export function buildFlowDefaultRoute({
+  path,
+  name,
+  layoutComponent,
+}: Pick<IOrderFlowArgs, 'path' | 'name' | 'layoutComponent'>): RouteRecordRaw {
+  return {
+    path: path,
+    name: name,
+    component: layoutComponent,
+    children: [
+      {
+        path: '/:catchAll(.*)',
+        name: `${name.toString()}CatchAll`,
+        component: CatchAll,
+      },
+    ],
   };
 }
 
