@@ -33,5 +33,5 @@ onMounted(async () => {
 <template>
   <h1>TrademarkOrderFlow</h1>
   <p v-if="isLoading">Loading...</p>
-  <RouterView />
+  <RouterView v-if="isLoading" />
 </template>

@@ -7,7 +7,7 @@ import type {
 import { useRouter } from 'vue-router';
 import { computed, ref, shallowRef } from 'vue';
 import type { IOrderFlow } from '@/flows/IOrderFlow';
-import type { IOrderModule } from '@/modules/IOrderModule';
+import type { IOrderModule, IOrderReviewModule } from '@/modules/IOrderModule';
 import { buildFlowDefaultRoute } from '@/flows/buildOrderFlow';
 
 export const useNavigationStore = defineStore('navigation', () => {
@@ -15,7 +15,19 @@ export const useNavigationStore = defineStore('navigation', () => {
 
   const currentFlow = ref<IOrderFlow>();
   const currentModuleIndex = ref(0);
-  const currentModules = shallowRef<IOrderModule[]>([]);
+
+  const currentIntroModules = shallowRef<IOrderModule[]>([]);
+  const currentReviewModules = shallowRef<IOrderReviewModule[]>([]);
+  const currentOrderModules = shallowRef<IOrderModule[]>([]);
+
+  const currentModules = computed(() => {
+    return [
+      ...currentIntroModules.value,
+      ...currentOrderModules.value,
+      ...currentReviewModules.value,
+    ];
+  });
+
   const currentModule = computed(
     () => currentModules.value[currentModuleIndex.value],
   );
@@ -89,6 +101,10 @@ export const useNavigationStore = defineStore('navigation', () => {
     });
   };
 
+  const loadOrderModules = (orderModules: IOrderModule[]) => {
+    // TODO: build this
+  };
+
   const nextModule = () => {
     if (!currentModule.value || !currentFlow.value) {
       return;
@@ -117,9 +133,15 @@ export const useNavigationStore = defineStore('navigation', () => {
 
   return {
     loadFlow,
+    loadOrderModules,
     nextModule,
     pushModulePage,
-    currentModules: computed(() => currentModules.value),
+    currentModules,
+    // TODO: Find a good name for this
+    orderModules: computed(() => [
+      ...currentIntroModules.value,
+      ...currentOrderModules.value,
+    ]),
   };
 });
 

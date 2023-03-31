@@ -5,7 +5,7 @@ import { useNavigationStore } from '@/stores/navigation';
 
 const navigationStore = useNavigationStore();
 
-const moduleStores = navigationStore.currentModules.map((m) =>
+const moduleStores = navigationStore.orderModules.map((m) =>
   m.useModuleStore(),
 );
 
@@ -15,7 +15,7 @@ const isValid = computed(() => moduleStores.every((store) => store.isValid));
 <template>
   <h2>Summary</h2>
 
-  <template v-for="(m, index) in navigationStore.currentModules" :key="index">
+  <template v-for="(m, index) in navigationStore.orderModules" :key="index">
     <component :is="m.summaryItemComponent" />
   </template>
 

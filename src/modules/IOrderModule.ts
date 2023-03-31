@@ -28,3 +28,8 @@ export interface IOrderModule {
 
   useModuleStore: () => IOrderModuleStore;
 }
+
+export interface IOrderReviewModule {
+  startRoute: string;
+  routes: RouteRecordRaw[];
+}
