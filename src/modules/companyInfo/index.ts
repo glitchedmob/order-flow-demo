@@ -7,12 +7,12 @@ export const companyInfo: IOrderModule = {
 
   routes: [
     {
-      path: '/company-name',
+      path: 'company-name',
       name: 'CompanyName',
       component: () => import('./pages/CompanyName.vue'),
     },
     {
-      path: '/company-address',
+      path: 'company-address',
       name: 'CompanyAddress',
       component: () => import('./pages/CompanyAddress.vue'),
     },

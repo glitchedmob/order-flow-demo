@@ -24,33 +24,6 @@ export function buildOrderFlow({
   };
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export function buildFlowDefaultRoute({
   path,
   name,
@@ -69,26 +42,6 @@ export function buildFlowDefaultRoute({
     ],
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

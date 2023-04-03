@@ -7,12 +7,12 @@ export const contact: IOrderModule = {
 
   routes: [
     {
-      path: '/name',
+      path: 'name',
       name: 'ContactName',
       component: () => import('./pages/ContactName.vue'),
     },
     {
-      path: '/address',
+      path: 'address',
       name: 'ContactAddress',
       component: () => import('./pages/ContactAddress.vue'),
     },

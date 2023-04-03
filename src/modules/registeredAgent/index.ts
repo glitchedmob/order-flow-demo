@@ -7,7 +7,7 @@ export const registeredAgent: IOrderModule = {
 
   routes: [
     {
-      path: '/registered-agent',
+      path: 'registered-agent',
       name: 'RegisteredAgent',
       component: () => import('./pages/RegisteredAgent.vue'),
     },

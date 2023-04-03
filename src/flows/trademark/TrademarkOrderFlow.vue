@@ -1,33 +1,34 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { trademarkOrderFlow } from '@/flows/trademark';
 import { useNavigationStore } from '@/stores/navigation';
-import type { IOrderModuleStore } from '@/modules/IOrderModule';
 import { companyInfo } from '@/modules/companyInfo';
-import { contact } from '@/modules/contact';
+import type { IOrderModuleStore } from '@/modules/IOrderModule';
+
 import { wait } from '@/utils';
 
+
 const moduleStores = ref<IOrderModuleStore[]>([]);
-
 const navigationStore = useNavigationStore();
-
 const isLoading = ref(true);
 
 const fetchConfig = async () => {
-  await wait(500);
+  
+  // moduleStores.value = navigationStore.currentIntroModules.map((m) =>
+  //   m.useModuleStore(),
+  // );
 
-  isLoading.value = false;
+  // // We can get somehow data and load next modules
+  // // moduleStores.value
+  // await wait(500);
 
-  return [contact, companyInfo];
+  // isLoading.value = false;
+  // return [companyInfo];
 };
 
 onMounted(async () => {
-  const modules = await fetchConfig();
-
-  navigationStore.loadFlow(trademarkOrderFlow, modules);
-
-  moduleStores.value = modules.map((m) => m.useModuleStore());
-  moduleStores.value.forEach((store) => store.initialize());
+  console.log('OrderFlow mounted!');
+  // const orderModules = await fetchConfig();
+  // navigationStore.loadOrderModules(orderModules);
 });
 </script>
 <template>

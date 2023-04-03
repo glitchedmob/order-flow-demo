@@ -46,21 +46,43 @@ export const useNavigationStore = defineStore('navigation', () => {
   const currentFlow = ref<IOrderFlow>();
   const currentModuleIndex = ref(0);
 
+  const orderLoaded = ref(false);
+
   const currentIntroModules = shallowRef<IOrderModule[]>([]);
   const currentOrderModules = shallowRef<IOrderModule[]>([]);
   const currentReviewModules = shallowRef<IOrderReviewModule[]>([]);
 
 
-  const buildIntroRoutes = (modules: IOrderModule[], flow: IOrderFlow) => {
+  const buildIntroRoutes = async (modules: IOrderModule[], flow: IOrderFlow) => {
     if (currentFlow.value) {
       const originalFlowRoute = buildFlowDefaultRoute(currentFlow.value);
       router.addRoute(originalFlowRoute);
     }
+    currentFlow.value = flow;
     currentIntroModules.value = modules;
     const flowRoutes = buildFlowRoutes(flow, flow.layoutComponent, modules);
     router.addRoute(flowRoutes);
-    const firstChild: RouteRecordRaw = flowRoutes.children![0];
-    router.push({ name: firstChild.name });
+
+    // Trigger a rerender and update current route once new routes are loaded
+    await router.replace({
+      path: router.currentRoute.value.path,
+      query: router.currentRoute.value.query,
+    });
+
+    const activeModule = getModuleFromRoute(router.currentRoute.value);
+    const activeModuleIndex = activeModule
+      ? currentModules.value.indexOf(activeModule)
+      : -1;
+
+    if (activeModule && activeModuleIndex !== -1) {
+      currentModuleIndex.value = activeModuleIndex;
+      return;
+    }
+
+    currentModuleIndex.value = 0;
+    return router.push({
+      name: getRouteName(currentModule.value?.startRoute),
+    });
   }
 
   const currentModules = computed(() => {
@@ -71,68 +93,95 @@ export const useNavigationStore = defineStore('navigation', () => {
     ];
   });
 
+  const loadOrderModules = async (orderModules: IOrderModule[]) => {
+    currentOrderModules.value = orderModules;
+    const orderRoutes = orderModules.flatMap(m => m.routes);
+    const newRoutes = prefixRoutes(orderRoutes, '', currentFlow.value?.name);
+    // newRoutes.forEach(r => {
+    //   router.addRoute(currentFlow.value?.name, r);
+    // });
 
 
 
+    const parentRoute = currentFlow.value?.name as string;
+
+    router.addRoute(parentRoute, {
+      path: 'order',
+      name: `${currentFlow.value?.name}Order`,
+      component: currentFlow.value?.layoutComponent,
+      children: newRoutes,
+    })
 
 
 
+    orderLoaded.value = true;
+    nextModule();
+  };
+
+  const getRouteNameWithoutFlow = (route: RouteLocationNormalizedLoaded): string => {
+    return (
+      route.name
+        ?.toString()
+        .replace(currentFlow.value?.name.toString() ?? '', '') ?? ''
+    );
+  };
+
+
+  const getRouteName = (name?: string): string | undefined => {
+    if (!currentFlow.value) {
+      return;
+    }
+
+    return (currentFlow.value.route.name?.toString() ?? '') + name;
+  };
+
+
+  const getModuleFromRoute = (
+    route: RouteLocationNormalizedLoaded,
+  ): IOrderModule | IOrderReviewModule | undefined => {
+    const routeNameWithoutFlow = getRouteNameWithoutFlow(route);
+
+    return currentModules.value.find((m) => {
+      const routeNames = m.routes.map((route) => route.name?.toString());
+
+      return routeNames.includes(routeNameWithoutFlow);
+    });
+  };
+
+
+  const currentModule = computed(
+    () => currentModules.value[currentModuleIndex.value],
+  );
+
+
+  const pushModulePage = (name: string) => {
+    const routeName = getRouteName(name);
+
+    if (!routeName) {
+      return Promise.reject('no loaded module');
+    }
+
+    return router.push({ name: getRouteName(name) });
+  };
+
+
+  const nextModule = () => {
+    if (!currentModule.value || !currentFlow.value) {
+      return;
+    }
+
+    if (!orderLoaded.value && currentModuleIndex.value === currentModules.value.length - 1) {
+      return router.push({ name: 'OrderCatch', params: { catchAll: 'start-order' } });
+    }
+
+    currentModuleIndex.value += 1;
+    return router.push({
+      name: getRouteName(currentModule.value.startRoute),
+    });
+  };
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // const currentModule = computed(
-  //   () => currentModules.value[currentModuleIndex.value],
-  // );
-
-  // const getRouteName = (name?: string): string | undefined => {
-  //   if (!currentFlow.value) {
-  //     return;
-  //   }
-
-  //   return (currentFlow.value.route.name?.toString() ?? '') + name;
-  // };
-
-  // // const getModuleFromRoute = (
-  // //   route: RouteLocationNormalizedLoaded,
-  // // ): IOrderModule | undefined => {
-  // //   const routeNameWithoutFlow = getRouteNameWithoutFlow(route);
-
-  // //   return currentModules.value.find((m) => {
-  // //     const routeNames = m.routes.map((route) => route.name?.toString());
-
-  // //     return routeNames.includes(routeNameWithoutFlow);
-  // //   });
-  // // };
-
-  // const getRouteNameWithoutFlow = (route: RouteLocationNormalizedLoaded): string => {
-  //   return (
-  //     route.name
-  //       ?.toString()
-  //       .replace(currentFlow.value?.name.toString() ?? '', '') ?? ''
-  //   );
-  // };
 
   // const loadFlow = async (flow: IOrderFlow, modules: IOrderModule[]) => {
   //   if (currentFlow.value) {
@@ -173,46 +222,22 @@ export const useNavigationStore = defineStore('navigation', () => {
   //   });
   // };
 
-  // const loadOrderModules = (orderModules: IOrderModule[]) => {
-  //   // TODO: build this
-  // };
 
-  // const nextModule = () => {
-  //   if (!currentModule.value || !currentFlow.value) {
-  //     return;
-  //   }
 
-  //   if (currentModuleIndex.value === currentModules.value.length - 1) {
-  //     return router.push({ name: getRouteName('Summary') });
-  //   }
 
-  //   currentModuleIndex.value += 1;
 
-  //   return router.replace({
-  //     name: getRouteName(currentModule.value.startRoute),
-  //   });
-  // };
-
-  // const pushModulePage = (name: string) => {
-  //   const routeName = getRouteName(name);
-
-  //   if (!routeName) {
-  //     return Promise.reject('no loaded module');
-  //   }
-
-  //   return router.push({ name: getRouteName(name) });
-  // };
 
   return {
     buildIntroRoutes,
-    currentIntroModules
+    loadOrderModules,
+    pushModulePage,
+    nextModule,
 
+    currentIntroModules,
+    currentModules,
     // loadFlow,
     // loadOrderModules,
-    // nextModule,
-    // pushModulePage,
-    // currentModules,
-    // // TODO: Find a good name for this
+    // TODO: Find a good name for this
     // orderModules: computed(() => [
     //   ...currentIntroModules.value,
     //   ...currentOrderModules.value,
@@ -249,15 +274,30 @@ function buildFlowRoutes(
   layoutComponent: RouteRecordRaw['component'],
   modules: IOrderModule[],
 ): RouteRecordRaw {
+
+  const flowPath = flow.path.charAt(flow.path.length - 1) != '/' ? flow.path + '/' : flow.path;
   const childRoutes = modules.flatMap((m) =>
-    prefixRoutes(m.routes, flow.path, flow.name),
+    prefixRoutes(m.routes, flowPath, flow.name),
   );
+
+  const orderRoute: RouteRecordRaw = {
+    path: 'order',
+    name: `${flow.name as string}Order`,
+    component: flow.orderLayoutComponent,
+    children: [
+      {
+        path: ':catchAll(.*)',
+        name: 'OrderCatch',
+        component: { template: '' },
+      }
+    ]
+  }
 
   return {
     path: flow.path,
     name: flow.name,
     component: layoutComponent,
-    children: childRoutes,
+    children: [...childRoutes, orderRoute],
   };
 }
 

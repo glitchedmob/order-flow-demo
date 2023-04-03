@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { companyInfo } from '@/modules/companyInfo';
+import { onMounted, ref } from 'vue';
 import { contact } from '@/modules/contact';
 import { useNavigationStore } from '@/stores/navigation';
 import { trademarkOrderFlow } from '.';
 
 const naviagtionStore = useNavigationStore();
+const isLoading = ref(true);
 
-const fetchIntroModules = () => {
-   return [contact, companyInfo];
-}
+const fetchIntroModules = async () => {
+  return [contact];
+};
 
 onMounted(async () => {
-  const modules = fetchIntroModules();
-  naviagtionStore.buildIntroRoutes(modules, trademarkOrderFlow);
+  const modules = await fetchIntroModules();
+
+  await naviagtionStore.buildIntroRoutes(modules, trademarkOrderFlow);
+
+  isLoading.value = false;
 });
 </script>
 <template>
-  <RouterView />
+  <RouterView v-if="!isLoading" />
 </template>
