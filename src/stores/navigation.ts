@@ -9,6 +9,7 @@ import { computed, ref, shallowRef } from 'vue';
 import type { IOrderFlow } from '@/flows/IOrderFlow';
 import type { IOrderModule, IOrderReviewModule } from '@/modules/IOrderModule';
 import { buildFlowDefaultRoute } from '@/flows/buildOrderFlow';
+import { companyInfo } from '@/modules/companyInfo';
 
 
 // introModules: IOrderModule[];
@@ -93,26 +94,23 @@ export const useNavigationStore = defineStore('navigation', () => {
     ];
   });
 
-  const loadOrderModules = async (orderModules: IOrderModule[]) => {
+  const loadOrderModules = async () => {
+    const introModulesData = currentIntroModules.value.map(m => m.useModuleStore());
+    // We can get right data here and load right order config
+    // TMP
+    const orderModules = [companyInfo];
+
     currentOrderModules.value = orderModules;
     const orderRoutes = orderModules.flatMap(m => m.routes);
-    const newRoutes = prefixRoutes(orderRoutes, '', currentFlow.value?.name);
-    // newRoutes.forEach(r => {
-    //   router.addRoute(currentFlow.value?.name, r);
-    // });
-
-
-
+    const newRoutes = prefixRoutes(orderRoutes, currentFlow.value?.name);
     const parentRoute = currentFlow.value?.name as string;
 
     router.addRoute(parentRoute, {
       path: 'order',
-      name: `${currentFlow.value?.name}Order`,
-      component: currentFlow.value?.layoutComponent,
+      name: `Order`,
+      component: currentFlow.value?.orderLayoutComponent,
       children: newRoutes,
-    })
-
-
+    });
 
     orderLoaded.value = true;
     nextModule();
@@ -171,7 +169,7 @@ export const useNavigationStore = defineStore('navigation', () => {
     }
 
     if (!orderLoaded.value && currentModuleIndex.value === currentModules.value.length - 1) {
-      return router.push({ name: 'OrderCatch', params: { catchAll: 'start-order' } });
+      return loadOrderModules();
     }
 
     currentModuleIndex.value += 1;
@@ -179,53 +177,6 @@ export const useNavigationStore = defineStore('navigation', () => {
       name: getRouteName(currentModule.value.startRoute),
     });
   };
-
-
-
-
-  // const loadFlow = async (flow: IOrderFlow, modules: IOrderModule[]) => {
-  //   if (currentFlow.value) {
-  //     const originalFlowRoute = buildFlowDefaultRoute(currentFlow.value);
-  //     router.addRoute(originalFlowRoute);
-  //   }
-
-  //   currentFlow.value = flow;
-  //   currentModules.value = modules;
-
-  //   const flowRoutes = buildFlowRoutes(flow, modules);
-  //   router.addRoute(flowRoutes);
-
-  //   // Trigger a rerender and update current route once new routes are loaded
-  //   await router.replace({
-  //     path: router.currentRoute.value.path,
-  //     query: router.currentRoute.value.query,
-  //   });
-
-  //   const activeModule = getModuleFromRoute(router.currentRoute.value);
-  //   const activeModuleIndex = activeModule
-  //     ? currentModules.value.indexOf(activeModule)
-  //     : -1;
-
-  //   if (activeModule && activeModuleIndex !== -1) {
-  //     currentModuleIndex.value = activeModuleIndex;
-  //     return;
-  //   }
-
-  //   if (getRouteNameWithoutFlow(router.currentRoute.value) === 'Summary') {
-  //     currentModuleIndex.value = currentModules.value.length - 1;
-  //     return;
-  //   }
-
-  //   currentModuleIndex.value = 0;
-  //   return router.replace({
-  //     name: getRouteName(currentModule.value?.startRoute),
-  //   });
-  // };
-
-
-
-
-
 
   return {
     buildIntroRoutes,
@@ -235,6 +186,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 
     currentIntroModules,
     currentModules,
+    currentOrderModules
     // loadFlow,
     // loadOrderModules,
     // TODO: Find a good name for this
@@ -274,42 +226,26 @@ function buildFlowRoutes(
   layoutComponent: RouteRecordRaw['component'],
   modules: IOrderModule[],
 ): RouteRecordRaw {
-
-  const flowPath = flow.path.charAt(flow.path.length - 1) != '/' ? flow.path + '/' : flow.path;
   const childRoutes = modules.flatMap((m) =>
-    prefixRoutes(m.routes, flowPath, flow.name),
+    prefixRoutes(m.routes, flow.name),
   );
-
-  const orderRoute: RouteRecordRaw = {
-    path: 'order',
-    name: `${flow.name as string}Order`,
-    component: flow.orderLayoutComponent,
-    children: [
-      {
-        path: ':catchAll(.*)',
-        name: 'OrderCatch',
-        component: { template: '' },
-      }
-    ]
-  }
 
   return {
     path: flow.path,
     name: flow.name,
     component: layoutComponent,
-    children: [...childRoutes, orderRoute],
+    children: [...childRoutes],
   };
 }
 
 function prefixRoutes(
   routes: RouteRecordRaw[],
-  pathPrefix: string,
   namePrefix?: RouteRecordName,
 ): RouteRecordRaw[] {
   return routes.map((route) => {
     const { path, name, ...rest } = route;
     return {
-      path: pathPrefix + path,
+      path: path,
       name: (namePrefix?.toString() ?? '') + (name?.toString() ?? ''),
       ...rest,
     };
