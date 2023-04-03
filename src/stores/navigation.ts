@@ -198,29 +198,7 @@ export const useNavigationStore = defineStore('navigation', () => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Core functions
 function buildFlowRoutes(
   flow: IOrderFlow,
   layoutComponent: RouteRecordRaw['component'],
