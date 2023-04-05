@@ -65,7 +65,7 @@ export const useNavigationStore = defineStore('navigation', () => {
     console.log("No refresh detected, redirecting to first intro route...");
     currentModuleIndex.value = 0;
 
-    return router.push({
+    return router.replace({
       name: getRouteName(currentModule.value?.startRoute),
     });
   }
