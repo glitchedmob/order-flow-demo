@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useNavigationStore } from '../../stores/navigation';
+import { useNavigationStore } from '../stores/navigation';
 
 const navigationStore = useNavigationStore();
-
 const isLoading = ref(true);
 
 onMounted(async () => {
@@ -13,7 +12,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <h1>TrademarkOrderFlow</h1>
+  <h1>Order flow</h1>
   <RouterView v-if="!isLoading" />
   <p v-else>Loading...</p>
 </template>

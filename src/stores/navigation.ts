@@ -11,17 +11,6 @@ import type { IOrderModule, IOrderReviewModule } from '@/modules/IOrderModule';
 import { buildFlowDefaultRoute } from '@/flows/buildOrderFlow';
 import { companyInfo } from '@/modules/companyInfo';
 
-// TMP 
-
-import ReviewRoute from '../flows/trademark/ReviewRoute.vue';
-
-
-
-
-
-
-
-
 
 export const useNavigationStore = defineStore('navigation', () => {
   const router = useRouter();
@@ -54,12 +43,16 @@ export const useNavigationStore = defineStore('navigation', () => {
 
   const loadFlow = (flow: IOrderFlow) => {
     console.log("Loading flow!");
+    // Rebuilding existing flow routes
     if (currentFlow.value) {
       const originalFlowRoute = buildFlowDefaultRoute(currentFlow.value);
       router.addRoute(originalFlowRoute);
     }
     currentFlow.value = flow;
+    // Flow state reset
     currentIntroModules.value = flow.introModules;
+    currentOrderModules.value = [];
+    currentReviewModules.value = [];
     introModulesFinished.value = false;
 
     // Initialize stores
@@ -118,7 +111,7 @@ export const useNavigationStore = defineStore('navigation', () => {
     console.log("Requested order route doesnt exist! Redirecting to first order module!");
 
     const firstOrderModule = orderModules[0];
-    return router.push({
+    return router.replace({
       name: getRouteName(firstOrderModule.startRoute)
     });
   };
@@ -195,7 +188,7 @@ export const useNavigationStore = defineStore('navigation', () => {
     }
 
     if (!introModulesFinished.value && currentModuleIndex.value === currentModules.value.length - 1) {
-      return router.push({ name: String(currentFlow.value.name) + 'OrderCatch', params: { catchAll: 'order-start' } });
+      return router.replace({ name: String(currentFlow.value.name) + 'OrderCatch', params: { catchAll: 'order-start' } });
     }
 
     currentModuleIndex.value += 1;
@@ -215,10 +208,12 @@ export const useNavigationStore = defineStore('navigation', () => {
 
 
     // Diag
+    currentFlow,
     currentModule,
     currentModuleByRoute,
     currentModules,
     currentIntroModules,
+    introModulesFinished
 
 
     // TODO: Find a good name for this

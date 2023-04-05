@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-//import { formationOrderFlow } from '@/flows/formation';
+import { formationOrderFlow } from '@/flows/formation';
 import { trademarkOrderFlow } from '@/flows/trademark';
 import FlowListing from '@/components/FlowListing.vue';
 
@@ -11,7 +11,7 @@ const router = createRouter({
       name: 'FlowListing',
       component: FlowListing,
     },
-    //formationOrderFlow.route,
+    formationOrderFlow.route,
     trademarkOrderFlow.route,
   ],
 });

@@ -1,8 +1,10 @@
 import { buildOrderFlow } from '@/flows/buildOrderFlow';
+import { contact } from '@/modules/contact';
+import { thankYou } from '@/modules/thankYou';
 
 export const formationOrderFlow = buildOrderFlow({
   path: '/formation',
   name: 'FormationOrderFlow',
-  layoutComponent: () => import('./FormationOrderFlow.vue'),
-  summaryComponent: () => import('./FormationOrderSummary.vue'),
+  introModules: [contact],
+  reviewModules: [thankYou]
 });

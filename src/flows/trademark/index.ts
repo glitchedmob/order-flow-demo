@@ -6,7 +6,5 @@ export const trademarkOrderFlow = buildOrderFlow({
   path: '/trademark',
   name: 'TrademarkOrderFlow',
   introModules: [contact],
-  reviewModules: [thankYou],
-  layoutComponent: () => import('./TrademarkFlow.vue'),
-  orderLayoutComponent: () => import('./TrademarkOrderFlow.vue'),
+  reviewModules: [thankYou]
 });

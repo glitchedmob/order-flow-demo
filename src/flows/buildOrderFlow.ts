@@ -1,45 +1,39 @@
 import type { RouteRecordName, RouteRecordRaw } from 'vue-router';
 import type { IOrderFlow } from '@/flows/IOrderFlow';
 import type { IOrderModule, IOrderReviewModule } from '@/modules/IOrderModule';
+import FlowView from './FlowView.vue';
+import OrderView from './OrderView.vue';
 
 export interface IOrderFlowArgs {
   path: string;
   name: RouteRecordName;
   introModules: IOrderModule[];
   reviewModules: IOrderReviewModule[];
-  layoutComponent: RouteRecordRaw['component'];
-  orderLayoutComponent: RouteRecordRaw['component'];
 }
 
 export function buildOrderFlow({
   path,
   name,
-  layoutComponent,
   introModules,
   reviewModules,
-  orderLayoutComponent,
 }: IOrderFlowArgs): IOrderFlow {
   return {
     path,
     name,
-    layoutComponent,
-    orderLayoutComponent,
     introModules,
     reviewModules,
-    route: buildFlowDefaultRoute({ path, name, layoutComponent, orderLayoutComponent, introModules }),
+    route: buildFlowDefaultRoute({ path, name, introModules, reviewModules }),
   };
 }
 
 export function buildFlowDefaultRoute({
   path,
   name,
-  layoutComponent,
-  orderLayoutComponent,
-  introModules
-}: Pick<IOrderFlowArgs, 'path' | 'name' | 'layoutComponent' | 'orderLayoutComponent' | 'introModules'>): RouteRecordRaw {
-
+  introModules,
+  reviewModules
+}: Pick<IOrderFlowArgs, 'path' | 'name' | 'introModules' | 'reviewModules'>): RouteRecordRaw {
   const introRoutes = introModules.flatMap(m => m.routes);
-  const introChildren = introRoutes.map(ch=>{
+  const introChildren = introRoutes.map(ch => {
     return {
       ...ch,
       name: String(name) + String(ch.name),
@@ -50,13 +44,25 @@ export function buildFlowDefaultRoute({
   return {
     path: path,
     name: name,
-    component: layoutComponent,
+    component: FlowView,
+    props: {
+      orderFlow: {
+        path,
+        name,
+        introModules,
+        reviewModules,
+        route: {
+          path,
+          name
+        }
+      }
+    },
     children: [
       ...introChildren,
       {
         name: String(name) + "Order",
         path: 'order',
-        component: orderLayoutComponent,
+        component: OrderView,
         children: [
           {
             name: String(name) + "OrderCatch",

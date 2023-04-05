@@ -6,8 +6,6 @@ export interface IOrderFlow {
   name: RouteRecordName;
   introModules: IOrderModule[];
   reviewModules: IOrderReviewModule[];
-  layoutComponent: RouteRecordRaw['component'];
-  orderLayoutComponent: RouteRecordRaw['component'];
   route: RouteRecordRaw;
 }
 
