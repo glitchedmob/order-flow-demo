@@ -1,6 +1,8 @@
 import type { IOrderModule } from '@/modules/IOrderModule';
 import { defineAsyncComponent } from 'vue';
 import { useCompanyInfoModuleStore } from '@/modules/companyInfo/store';
+import CompanyName from './pages/CompanyName.vue';
+import CompanyAddress from './pages/CompanyAddress.vue';
 
 export const companyInfo: IOrderModule = {
   startRoute: 'CompanyName',
@@ -9,12 +11,12 @@ export const companyInfo: IOrderModule = {
     {
       path: 'company-name',
       name: 'CompanyName',
-      component: () => import('./pages/CompanyName.vue'),
+      component: CompanyName,
     },
     {
       path: 'company-address',
       name: 'CompanyAddress',
-      component: () => import('./pages/CompanyAddress.vue'),
+      component: CompanyAddress,
     },
   ],
 

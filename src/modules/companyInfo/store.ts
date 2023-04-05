@@ -10,7 +10,7 @@ export const useCompanyInfoModuleStore = defineStore('companyName', () => {
   );
 
   const initialize = () => {
-    console.log('initialized companyInfo module');
+    console.log('Initialized companyInfo module');
   };
 
   return { companyName, companyAddress, isValid, initialize };

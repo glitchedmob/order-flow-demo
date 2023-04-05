@@ -8,7 +8,7 @@ export const useContactStore = defineStore('contact', () => {
   const isValid = computed(() => name.value !== '' && address.value !== '');
 
   const initialize = () => {
-    console.log('initialized contact module');
+    console.log('Initialized contact module');
   };
 
   return { name, address, isValid, initialize };
