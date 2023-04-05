@@ -100,23 +100,11 @@ export const useNavigationStore = defineStore('navigation', () => {
     orderModules.forEach(m => m.useModuleStore().initialize());
 
     // Add modules routes
-    // Orer routes
-    const orderRouteName = flowName + 'Order';
-    const prebuiltOrderRoutes = buildChildrenRoutes(orderModules, flowName);
-    prebuiltOrderRoutes.forEach(r => router.addRoute(orderRouteName, r));
-
-    // Create review routes
     const reviewModules = currentFlow.value!.reviewModules;
     currentReviewModules.value = reviewModules;
-    const prebuiltReviewRoutes = buildChildrenRoutes(reviewModules, flowName);
-    const reviewRoute: RouteRecordRaw = {
-      name: flowName + 'Review',
-      path: 'review',
-      component: ReviewRoute,
-      children: prebuiltReviewRoutes
-    }
-    router.addRoute(flowName, reviewRoute);
-
+    const orderRouteName = flowName + 'Order';
+    const prebuiltOrderRoutes = buildChildrenRoutes([...orderModules, ...reviewModules], flowName);
+    prebuiltOrderRoutes.forEach(r => router.addRoute(orderRouteName, r));
     //console.log(router.getRoutes());
 
     // State update
